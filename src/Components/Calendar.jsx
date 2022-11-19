@@ -1,4 +1,4 @@
-import React from 'react';
+import { React, useState, useEffect } from 'react';
 import {
   ChakraProvider,
   Box,
@@ -10,6 +10,7 @@ import {
   GridItem,
   theme,
 } from '@chakra-ui/react';
+import { Eventreq } from './Eventreq';
 
 export function Daily(props) {
   const times = [
@@ -19,6 +20,11 @@ export function Daily(props) {
 
   const isEvent = false;
   const isBooking = true;
+
+  useEffect(() => {
+    //Eventreq(props.dateQ, 'fetch');
+    console.log("calendar : "+props.dateQ)
+  }, [props]);
 
   return (
     <Box bg='white' w='100%'>
@@ -40,7 +46,7 @@ export function Daily(props) {
           {props.day}
         </Text>
       </Box>
-      {/* slot elements */}  
+      {/* slot blocks */}  
       {times.map(time => (
         <Box display='flex' flexDirection='row' h='12'>
           <Text
@@ -64,7 +70,7 @@ export function Daily(props) {
           >
             <Box
               display={isEvent ? 'block' : 'none'}
-              bg={isBooking ? 'blue' : 'green'}
+              bg={isBooking ? '#DB4437' : '#0F9D58'}
               w='100%'
               h='100%'
             ></Box>
@@ -76,43 +82,31 @@ export function Daily(props) {
 }
 
 export function Weekly(props) {
-  const days = [14, 15, 16, 17, 18];
-  const week = [
-    { date: '14', day: 'Monday' },
-    { date: '15', day: 'Tuesday' },
-    { date: '16', day: 'Wednesday' },
-    { date: '17', day: 'Thursday' },
-    { date: '18', day: 'Friday' },
-  ];
-  //const week = [{ date : '14', day : 'Mon'},{ date : '15', day : 'Tue'},{ date : '16', day : 'Wed'},{ date : '17', day : 'Thu'},{ date : '18', day : 'Frid'}]
 
   return (
     <Box ml='5px' mt='5px'>
       <Grid templateColumns='repeat(5, 1fr)' gap={0}>
-        {week.map(week => (
+        {props.week.map(wk => (
           <GridItem w='100%' bg='white'>
             <Box display='flex' flexFlow='column wrap'>
               <Box
                 w='70px'
                 onClick={e => {
                   props.setDaily(true);
-                  props.setDate(week.date);
-                  props.setDay(week.day);
+                  props.setDate(wk.date);
+                  props.setDay(wk.day);
                 }}
-                // onDoubleClick={e => {
-                //     props.setDaily(true);
-                // }}
                 _hover={{ cursor: 'pointer' }}
               >
                 <Text
                   fontSize={{ base: '30', sm: '45' }}
                   maxW={{ base: '41', sm: '65' }}
                   borderRadius='50'
-                  bg={props.date_selected == week.date ? '#2684FC' : 'white'}
-                  _hover={{ bg: 'blackAlpha.200' }}
-                  pl='1'
+                  bg={props.date_selected == wk.date ? '#4285F4' : 'white'}
+                  _hover={{ bg: props.date_selected == wk.date ? '#2684FC' : 'blackAlpha.200' }}
+                  align='center'
                 >
-                  {week.date}
+                  {wk.date}
                 </Text>
               </Box>
               <Text
@@ -121,10 +115,10 @@ export function Weekly(props) {
                 fontSize={{ base: '12', sm: '15' }}
                 h='30'
               >
-                {week.day}
+                {wk.day}
               </Text>
             </Box>
-            <Daily date={week.date} day={week.day} isDaily={false} />
+            <Daily dateQ={wk.dateQ} date={wk.date} day={wk.day} isDaily={false} />
           </GridItem>
         ))}
       </Grid>
