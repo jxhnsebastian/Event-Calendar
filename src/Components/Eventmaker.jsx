@@ -154,7 +154,7 @@ export default function Eventmaker(props) {
               />
             </ModalHeader>
           </Box>
-          <ModalCloseButton />
+          <ModalCloseButton onClick={() => {setB(false);setP(false);}}/>
           <Box bg={isB ? '#DB4437' : isP ? '#0F9D58' : ''}>
             <ModalBody>
               <Box
@@ -171,14 +171,14 @@ export default function Eventmaker(props) {
                     fontSize='18px'
                     my='10px'
                   >
-                    <CalendarIcon mr='55px' />
-                    <Text fontFamily='sans-serif' fontWeight='semibold'>
+                    <CalendarIcon color='blackAlpha.700' mr='55px' />
+                    <Text fontFamily='sans-serif' >
                       {props.date}
                     </Text>
                   </Box>
                   {/* Time Duration */}
                   <Box display='flex' alignItems='center' fontSize='20px'>
-                    <TimeIcon />
+                    <TimeIcon color='blackAlpha.700' />
                     <Box display='flex' ml='50px'>
                       <Menu>
                         <MenuButton
@@ -223,7 +223,7 @@ export default function Eventmaker(props) {
                     w='80%'
                     my='10px'
                   >
-                    <InfoOutlineIcon />
+                    <InfoOutlineIcon color='blackAlpha.700' />
                     <Box
                       display='flex'
                       ml='50px'
@@ -260,7 +260,7 @@ export default function Eventmaker(props) {
                   </Box>
                   {/* Slider */}
                   <Box display='flex' fontSize='20px' mt='25px' w='100%'>
-                    <SettingsIcon mr='50px' />
+                    <SettingsIcon color='blackAlpha.700' mr='50px' />
                     <Slider
                       min={0}
                       max={slidermax}

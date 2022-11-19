@@ -23,17 +23,29 @@ import {
   Input,
 } from '@chakra-ui/react';
 import DatePicker from './DatePicker';
-
 import dayjs from 'dayjs';
 import { monthNo } from './DatePicker';
 import Eventmaker from './Eventmaker';
+import { getMonth, getWeek } from './DatePicker';
 
 export default function Sidebar(props) {
-  // useEffect(() => {
-  //   console.log("sidebar "+props.date_selected);
-  // }, [props.date_selected]);
 
   const today = dayjs().format('D-MMM-YYYY');
+  const [monthIdx, setMonthIdx] = useState();
+  function handlesetweek() {
+    setMonthIdx(dayjs().$M);
+    const month = getMonth();
+    {
+      month.map(week => {
+        {
+          week.map(d => {
+            if(d.$D == props.date_selected)
+              props.setweek(getWeek(week))
+          });
+        }
+      });
+    }
+  }
 
   const mNo = monthNo(props.month) + 1;
   const d = props.date_selected;
@@ -67,6 +79,8 @@ export default function Sidebar(props) {
         setMonth={props.setMonth}
         setYr={props.setYr}
         setweek={props.setweek}
+        monthIdx={monthIdx}
+        setMonthIdx={setMonthIdx}
       />
       <Tooltip hasArrow placement='bottom' label={today}>
         <Button
@@ -84,6 +98,13 @@ export default function Sidebar(props) {
             border: '0',
             color: 'white',
             boxShadow: 'lg',
+          }}
+          onClick={e => {
+            props.setDate(dayjs().format('DD'));
+            props.setDay(dayjs().format('dddd'));
+            props.setMonth(dayjs().format('MMMM'));
+            props.setYr(dayjs().format('YYYY'));
+            handlesetweek();
           }}
         >
           Today

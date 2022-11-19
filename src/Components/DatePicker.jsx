@@ -29,16 +29,22 @@ export default function DatePicker(props) {
   }, [currentMonthIdx]);
 
   useEffect(() => {
+    setCurrentMonthIdx(props.monthIdx);
+  }, [props.monthIdx]);
+
+  useEffect(() => {
     setCurrentMonthIdx(dayjs().month());
   }, [dayjs().month()]);
 
   function handlePrevMonth() {
     setCurrentMonthIdx(currentMonthIdx - 1);
     props.setweek(getWeek(getMonth(currentMonthIdx - 1)[0]));
+    props.setMonthIdx(currentMonthIdx-1);
   }
   function handleNextMonth() {
     setCurrentMonthIdx(currentMonthIdx + 1);
     props.setweek(getWeek(getMonth(currentMonthIdx + 1)[0]));
+    props.setMonthIdx(currentMonthIdx+1);
   }
 
   const month_year = dayjs(new Date(dayjs().year(), currentMonthIdx)).format(
