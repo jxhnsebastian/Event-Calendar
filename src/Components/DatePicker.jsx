@@ -7,11 +7,7 @@ import {
   VStack,
   Code,
   Grid,
-  theme,
   Button,
-  Slide,
-  useDisclosure,
-  CloseButton,
   IconButton,
   GridItem,
 } from '@chakra-ui/react';
@@ -22,7 +18,7 @@ export default function DatePicker(props) {
   const [currentMonthIdx, setCurrentMonthIdx] = useState(dayjs().month());
   const [currentMonth, setCurrentMonth] = useState(getMonth());
 
-  //const monthIndex = dayjs().month();
+  const [slct_month, setSlct_month] = useState(dayjs().format('MMMM'));
 
   useEffect(() => {
     setCurrentMonth(getMonth(currentMonthIdx));
@@ -108,8 +104,7 @@ export default function DatePicker(props) {
                   key={inx}
                   bg={
                     props.date_selected == day.format('D') &&
-                    month ==
-                      dayjs(new Date(dayjs().year(), day.$M)).format('MMMM')
+                    month == slct_month
                       ? '#4285F4'
                       : 'white'
                   }
@@ -130,15 +125,12 @@ export default function DatePicker(props) {
                   onClick={e => {
                     props.setDate(day.format('D'));
                     props.setDay(dayjs(dayjs().day(day.$W)).format('dddd'));
-                    //props.setDaily(false);
+                    setSlct_month(month);
                     //console.log(day);
                     //console.log(day.$D);
                     //console.log(day.$W);
                     //console.log(day.$M);
-                    //console.log(dayjs(dayjs().day(day.$W)).format('dddd'));
                     props.setweek(getWeek(row));
-                    //console.log(monthNo(month));
-                    //console.log('datepicker ' + props.date_selected);
                   }}
                 >
                   <Text fontFamily='sans-serif'>{day.format('D')}</Text>
