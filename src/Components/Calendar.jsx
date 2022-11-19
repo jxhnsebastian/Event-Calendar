@@ -21,10 +21,10 @@ export function Daily(props) {
   const isEvent = false;
   const isBooking = true;
 
-  useEffect(() => {
-    //Eventreq(props.dateQ, 'fetch');
-    console.log("calendar : "+props.dateQ)
-  }, [props]);
+  // useEffect(() => {
+  //   Eventreq(props.dateQ, 'fetch');
+  //   console.log("calendar : "+props.dateQ)
+  // }, [props]);
 
   return (
     <Box bg='white' w='100%'>

@@ -50,10 +50,10 @@ export default function Home() {
   const d = date_selected;
   const dateQ = curr_yr + '-' + (mNo<10 ? '0'+mNo : mNo )+ '-' + (d < 10 ? '0'+d : d)
   useEffect(() => {
-       console.log('Home'+dateQ);
+       console.log('date : '+dateQ);
      }, [date_selected]);
 
-  {/* to dosplay current week on loading */}
+  {/* to display current week on loading */}
   useEffect(() => {
     const month = getMonth();
     {
