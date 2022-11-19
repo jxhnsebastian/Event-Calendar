@@ -73,8 +73,10 @@ export default function Eventmaker(props) {
     //console.log(slidermax);
     const valid = Validity(eventinfo);
     //console.log(valid);
-    if (valid.status == 'success') Eventreq(eventinfo, 'add');
-    else {
+    if (valid.status == 'success') {
+      Eventreq(eventinfo, 'add');
+      console.log(eventinfo);
+    } else {
       toast({
         title: 'Error',
         description: valid.description,
@@ -300,7 +302,9 @@ export default function Eventmaker(props) {
   );
 }
 
-{/* Event validity checker */}
+{
+  /* Event validity checker */
+}
 function Validity(eventinfo) {
   var isSameOrBefore = require('dayjs/plugin/isSameOrBefore');
   dayjs.extend(isSameOrBefore);
@@ -323,8 +327,8 @@ function Validity(eventinfo) {
     eventinfo.block_type != 'PERSONAL'
   )
     description = 'Please Choose Event Type';
-  else if ( eventinfo.resources == 0)
-    description = 'Resources must be greater than 0'
+  else if (eventinfo.resources == 0)
+    description = 'Resources must be greater than 0';
   else status = 'success';
   return { status: status, description: description };
 }
