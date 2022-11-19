@@ -10,7 +10,6 @@ import {
   theme,
 } from '@chakra-ui/react';
 import { ColorModeSwitcher } from './ColorModeSwitcher';
-import { Logo } from './Logo';
 import Footer from './Components/Footer';
 import Home from './Components/Home';
 
