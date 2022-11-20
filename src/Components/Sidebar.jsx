@@ -21,28 +21,33 @@ import Eventmaker from './Eventmaker';
 import { getMonth, getWeek } from './DatePicker';
 
 export default function Sidebar(props) {
-
   const today = dayjs().format('D-MMM-YYYY');
-  const [monthIdx, setMonthIdx] = useState();
-  function handlesetweek() {
-    setMonthIdx(dayjs().$M);
+  const [istoday, setIstoday] = useState(true);
+
+  {/* displays current week when today clicked */}
+  function handleToday() {
     const month = getMonth();
-    {
-      month.map(week => {
-        {
-          week.map(d => {
-            if(d.$D == props.date_selected)
-              props.setweek(getWeek(week))
-          });
-        }
-      });
-    }
+      {
+        month.map(w => {
+          {
+            w.map(d => {
+              if (d.$D == dayjs().$D) {
+                props.setweek(getWeek(w));
+              }
+            });
+          }
+        });
+      }
   }
 
   const mNo = monthNo(props.month) + 1;
   const d = props.date_selected;
   const date =
-    props.yr + '-' + (mNo<10 ? '0'+mNo : mNo )+ '-' + (d < 10 ? '0'+d : d);
+    props.yr +
+    '-' +
+    (mNo < 10 ? '0' + mNo : mNo) +
+    '-' +
+    (d < 10 ? '0' + d : d);
 
   return (
     <Box
@@ -62,7 +67,7 @@ export default function Sidebar(props) {
         _hover={{}}
         onClick={e => props.setSidebar(false)}
       />
-      <Eventmaker date={date}/>
+      <Eventmaker date={date} />
       <DatePicker
         date_selected={props.date_selected}
         setDaily={props.setDaily}
@@ -71,8 +76,8 @@ export default function Sidebar(props) {
         setMonth={props.setMonth}
         setYr={props.setYr}
         setweek={props.setweek}
-        monthIdx={monthIdx}
-        setMonthIdx={setMonthIdx}
+        istoday={istoday}
+        setIstoday={setIstoday}
       />
       <Tooltip hasArrow placement='bottom' label={today}>
         <Button
@@ -92,11 +97,12 @@ export default function Sidebar(props) {
             boxShadow: 'lg',
           }}
           onClick={e => {
-            props.setDate(dayjs().format('DD'));
+            props.setDate(dayjs().format('D'));
             props.setDay(dayjs().format('dddd'));
             props.setMonth(dayjs().format('MMMM'));
             props.setYr(dayjs().format('YYYY'));
-            handlesetweek();
+            setIstoday(true);
+            handleToday();
           }}
         >
           Today

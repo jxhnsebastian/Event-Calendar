@@ -60,7 +60,7 @@ export default function Home() {
       month.map(week => {
         {
           week.map(d => {
-            if(d.$D == date_selected)
+            if(d.$D == dayjs().$D)
               setWeek(getWeek(week))
           });
         }

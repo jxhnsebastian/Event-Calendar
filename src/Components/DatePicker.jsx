@@ -21,35 +21,33 @@ export default function DatePicker(props) {
   const [slct_month, setSlct_month] = useState(dayjs().format('MMMM'));
 
   useEffect(() => {
+    setCurrentMonthIdx(dayjs().month());
+  }, [dayjs().month()]);
+
+  useEffect(() => {
     setCurrentMonth(getMonth(currentMonthIdx));
   }, [currentMonthIdx]);
 
   useEffect(() => {
-    setCurrentMonthIdx(props.monthIdx);
-  }, [props.monthIdx]);
-
-  useEffect(() => {
-    setCurrentMonthIdx(dayjs().month());
-  }, [dayjs().month()]);
+    if (props.istoday == true) {
+      setCurrentMonthIdx(dayjs().month());
+      setSlct_month(dayjs().format('MMMM'));
+    }
+  }, [props.istoday]);
 
   function handlePrevMonth() {
     setCurrentMonthIdx(currentMonthIdx - 1);
-    props.setweek(getWeek(getMonth(currentMonthIdx - 1)[0]));
-    props.setMonthIdx(currentMonthIdx-1);
+    props.setIstoday(false);
+    //props.setweek(getWeek(getMonth(currentMonthIdx - 1)[0]));   //jumps to last week of month
   }
   function handleNextMonth() {
     setCurrentMonthIdx(currentMonthIdx + 1);
-    props.setweek(getWeek(getMonth(currentMonthIdx + 1)[0]));
-    props.setMonthIdx(currentMonthIdx+1);
+    props.setIstoday(false);
+    //props.setweek(getWeek(getMonth(currentMonthIdx + 1)[0]));   //jumps to first week of month
   }
 
-  const month_year = dayjs(new Date(dayjs().year(), currentMonthIdx)).format(
-    'MMMM, YYYY'
-  );
   const month = dayjs(new Date(dayjs().year(), currentMonthIdx)).format('MMMM');
   const year = dayjs(new Date(dayjs().year(), currentMonthIdx)).format('YYYY');
-  props.setMonth(month);
-  props.setYr(year);
 
   return (
     <Box w='80%'>
@@ -71,7 +69,7 @@ export default function DatePicker(props) {
           fontSize={{ base: '12px', sm: '18px' }}
           align='center'
         >
-          {month_year}
+          {month}, {year}
         </Text>
         <IconButton
           bg='white'
@@ -110,7 +108,8 @@ export default function DatePicker(props) {
                   }
                   _hover={{
                     bg:
-                      props.date_selected == day.format('D')
+                      props.date_selected == day.format('D') &&
+                      month == slct_month
                         ? '#2684FC'
                         : 'blackAlpha.300',
                   }}
@@ -124,8 +123,10 @@ export default function DatePicker(props) {
                   }}
                   onClick={e => {
                     props.setDate(day.format('D'));
-                    props.setDay(dayjs(dayjs().day(day.$W)).format('dddd'));
-                    setSlct_month(month);
+                    props.setDay(day.format('dddd'));
+                    setSlct_month(day.format('MMMM'));
+                    props.setMonth(month);
+                    props.setYr(year);
                     //console.log(day);
                     //console.log(day.$D);
                     //console.log(day.$W);
@@ -144,7 +145,9 @@ export default function DatePicker(props) {
   );
 }
 
-{/* retunrs 7x5 matrix of days of the month */}
+{
+  /* retunrs 7x5 matrix of days of the month */
+}
 export function getMonth(month = dayjs().month()) {
   month = Math.floor(month);
   const year = dayjs().year();
@@ -159,7 +162,9 @@ export function getMonth(month = dayjs().month()) {
   return daysMatrix;
 }
 
-{/* returns week arrays in dateQ date day format */}
+{
+  /* returns week arrays in dateQ date day format */
+}
 export function getWeek(week) {
   var weekdays = [];
   //console.log(week);
@@ -180,7 +185,9 @@ export function getWeek(week) {
   return weekdays;
 }
 
-{/* returns month number to text input */}
+{
+  /* returns month number 0-11 to text input */
+}
 export function monthNo(m) {
   const months = [
     'January',

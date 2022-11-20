@@ -50,11 +50,11 @@ export function Daily(props) {
       {times.map(time => (
         <Box display='flex' flexDirection='row' h='12'>
           <Text
-            display={props.isDaily ? 'block' : 'none'}
-            fontSize='13'
+            display={props.isDaily ? 'block' : props.displayTime ? 'block' : 'none'}
+            fontSize={props.displayTime? '10' : '13'}
             fontWeight='semi-bold'
             align='start'
-            minW='40px'
+            minW={props.displayTime? '20px' : '40px'}
             mt='-2'
           >
             {Math.floor(time)} :{' '}
@@ -83,8 +83,10 @@ export function Daily(props) {
 
 export function Weekly(props) {
 
+  var displayTime = false;
+
   return (
-    <Box ml='5px' mt='5px'>
+    <Box ml='5px' mt='5px' mr='5px'>
       <Grid templateColumns='repeat(5, 1fr)' gap={0}>
         {props.week.map(wk => (
           <GridItem w='100%' bg='white'>
@@ -118,7 +120,7 @@ export function Weekly(props) {
                 {wk.day}
               </Text>
             </Box>
-            <Daily dateQ={wk.dateQ} date={wk.date} day={wk.day} isDaily={false} />
+            <Daily dateQ={wk.dateQ} date={wk.date} day={wk.day} displayTime={wk.day == 'Monday' ? true : false} isDaily={false}/>
           </GridItem>
         ))}
       </Grid>
