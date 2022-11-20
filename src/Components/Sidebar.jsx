@@ -60,6 +60,7 @@ export default function Sidebar(props) {
       h='100%'
       w={{ base: '60%', lg: '20%' }}
       position={{ base: 'absolute', lg: 'static' }}
+      zIndex='1000'
     >
       <CloseButton
         ml='85%'

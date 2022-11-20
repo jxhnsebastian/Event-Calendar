@@ -74,7 +74,7 @@ export default function Eventmaker(props) {
     const valid = Validity(eventinfo);
     //console.log(valid);
     if (valid.status == 'success') {
-      //Eventreq(eventinfo, 'add');
+      console.log(Eventreq(eventinfo, 'add'));
       console.log(eventinfo);
     } else {
       toast({

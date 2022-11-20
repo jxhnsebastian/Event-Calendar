@@ -157,7 +157,7 @@ export default function Home() {
         <Box w={{ base: '100%', lg: sidebar ? '80%' : '100%' }}>
           {isDaily && (
             <Box p='2'>
-              <Daily dateQ={dateQ} date={date_selected} day={day_selected} isDaily={true} />
+              <Daily dateQ={dateQ} date={date_selected} day={day_selected} isDaily={true} s={date_selected} />
             </Box>
           )}
           {!isDaily && (

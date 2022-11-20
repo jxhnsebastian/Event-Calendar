@@ -9,8 +9,11 @@ import {
   Grid,
   GridItem,
   theme,
+  Button,
 } from '@chakra-ui/react';
 import { Eventreq } from './Eventreq';
+import dayjs from 'dayjs';
+import Eventdisplay from './Evendisplay';
 
 export function Daily(props) {
   const times = [
@@ -18,17 +21,98 @@ export function Daily(props) {
     16.0, 16.5, 17.0,
   ];
 
-  const isEvent = false;
-  const isBooking = true;
+  const [resp, setResp] = useState();
+  const [events, setEvents] = useState([]);
+  const [isdelete, setIsdelete] = useState();
+  const [del_id, setDel_id] = useState();
+  var blocks = [];
 
-  // useEffect(() => {
-  //   Eventreq(props.dateQ, 'fetch');
-  //   console.log("calendar : "+props.dateQ)
-  // }, [props]);
+  useEffect(() => {
+    //Eventreq(props.dateQ, 'fetch');
+    setResp({
+      success: true,
+      error: null,
+      data: {
+        '2022-11-23': [
+          {
+            block_id: 40,
+            merchant_id: 'GR-JBXJEK',
+            resources: 1,
+            from_time: '12:00:00',
+            to_time: '14:00:00',
+            block_type: 'BOOKING',
+            date: '2022-11-23',
+          },
+          {
+            block_id: 41,
+            merchant_id: 'GR-JBXJEK',
+            resources: 2,
+            from_time: '14:30:00',
+            to_time: '16:00:00',
+            block_type: 'PERSONAL',
+            date: '2022-11-23',
+          },
+        ],
+        '2022-11-24': [
+          {
+            block_id: 42,
+            merchant_id: 'GR-JBXJEK',
+            resources: 1,
+            from_time: '10:00:00',
+            to_time: '14:00:00',
+            block_type: 'BOOKING',
+            date: '2022-11-24',
+          },
+          {
+            block_id: 43,
+            merchant_id: 'GR-JBXJEK',
+            resources: 2,
+            from_time: '12:30:00',
+            to_time: '16:00:00',
+            block_type: 'BOOKING',
+            date: '2022-11-24',
+          },
+        ],
+      },
+    });
+    console.log(props.s);
+    console.log(props.isDaily);
+    if (resp != null) {
+      {
+        resp.data[props.dateQ]?.map(b => {
+          blocks.push({
+            id: b.block_id,
+            start: b.from_time.substring(0, 5),
+            end: b.to_time.substring(0, 5),
+            h:
+              (dayjs(props.dateQ + ' ' + b.to_time).diff(
+                dayjs(props.dateQ + ' ' + b.from_time),
+                'minutes'
+              ) /
+                30) *
+                100 +
+              '%',
+            resources: b.resources,
+            type: b.block_type,
+            date: b.date,
+          });
+        });
+      }
+    }
+    setEvents(blocks);
+    setIsdelete(false);
+  }, [props.s,isdelete]);
+
+  useEffect(() => {
+    if (isdelete == true) {
+      alert(del_id);
+      //Eventreq(del_id,'del')
+    }
+  }, [isdelete, del_id]);
 
   return (
     <Box bg='white' w='100%'>
-      {/* the date text*/}  
+      {/* the date text*/}
       <Box display='flex' flexFlow='row wrap' ml='8' alignItems='center'>
         <Text
           display={props.isDaily ? 'block' : 'none'}
@@ -46,15 +130,17 @@ export function Daily(props) {
           {props.day}
         </Text>
       </Box>
-      {/* slot blocks */}  
+      {/* slot blocks */}
       {times.map(time => (
         <Box display='flex' flexDirection='row' h='12'>
           <Text
-            display={props.isDaily ? 'block' : props.displayTime ? 'block' : 'none'}
-            fontSize={props.displayTime? '10' : '13'}
+            display={
+              props.isDaily ? 'block' : props.displayTime ? 'block' : 'none'
+            }
+            fontSize={props.displayTime ? '10' : '13'}
             fontWeight='semi-bold'
             align='start'
-            minW={props.displayTime? '20px' : '40px'}
+            minW={props.displayTime ? '20px' : '40px'}
             mt='-2'
           >
             {Math.floor(time)} :{' '}
@@ -67,13 +153,38 @@ export function Daily(props) {
             border='1px'
             borderBottom='0px'
             borderColor='#D9DDDC'
+            display='flex'
+            justifyContent='center'
           >
-            <Box
-              display={isEvent ? 'block' : 'none'}
-              bg={isBooking ? '#DB4437' : '#0F9D58'}
-              w='100%'
-              h='100%'
-            ></Box>
+            {events.map(b => (
+              <Box
+                w='70%'
+                h={b.h}
+                display={
+                  Math.floor(time) +
+                    ':' +
+                    ((time - Math.floor(time)) * 60 == 0 ? '00' : '30') ==
+                  b.start
+                    ? 'block'
+                    : 'none'
+                }
+              >
+                <Button
+                  w='100%'
+                  h='100%'
+                  bg={b.type == 'BOOKING' ? '#DB4437' : '#0F9D58'}
+                  _hover={{ bg: b.type == 'BOOKING' ? '#D21404' : '#028A0F' }}
+                  borderTopWidth='20px'
+                  borderColor='blackAlpha.700'
+                >
+                  <Eventdisplay
+                    data={b}
+                    setDelete={setIsdelete}
+                    setDel_id={setDel_id}
+                  />
+                </Button>
+              </Box>
+            ))}
           </Box>
         </Box>
       ))}
@@ -82,9 +193,6 @@ export function Daily(props) {
 }
 
 export function Weekly(props) {
-
-  var displayTime = false;
-
   return (
     <Box ml='5px' mt='5px' mr='5px'>
       <Grid templateColumns='repeat(5, 1fr)' gap={0}>
@@ -105,7 +213,12 @@ export function Weekly(props) {
                   maxW={{ base: '41', sm: '65' }}
                   borderRadius='50'
                   bg={props.date_selected == wk.date ? '#4285F4' : 'white'}
-                  _hover={{ bg: props.date_selected == wk.date ? '#2684FC' : 'blackAlpha.200' }}
+                  _hover={{
+                    bg:
+                      props.date_selected == wk.date
+                        ? '#2684FC'
+                        : 'blackAlpha.200',
+                  }}
                   align='center'
                 >
                   {wk.date}
@@ -120,11 +233,17 @@ export function Weekly(props) {
                 {wk.day}
               </Text>
             </Box>
-            <Daily dateQ={wk.dateQ} date={wk.date} day={wk.day} displayTime={wk.day == 'Monday' ? true : false} isDaily={false}/>
+            <Daily
+              dateQ={wk.dateQ}
+              date={wk.date}
+              day={wk.day}
+              displayTime={wk.day == 'Monday' ? true : false}
+              isDaily={false}
+              s={props.date_selected}
+            />
           </GridItem>
         ))}
       </Grid>
     </Box>
   );
 }
-
