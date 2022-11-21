@@ -20,18 +20,6 @@ import {
   ModalFooter,
   ModalBody,
   ModalCloseButton,
-  Input,
-  Menu,
-  MenuList,
-  MenuItem,
-  MenuButton,
-  Checkbox,
-  Slider,
-  SliderTrack,
-  SliderFilledTrack,
-  SliderThumb,
-  SliderMark,
-  useToast,
 } from '@chakra-ui/react';
 import {
   AddIcon,
@@ -47,8 +35,17 @@ export default function Eventdisplay(props) {
 
   return (
     <Box w='100%' h='100%'>
-      <Button w='100%' h='100%' variant='unstyled' onClick={onOpen}>
-        {props.data.id}
+      <Button
+        w='100%'
+        h='100%'
+        display='flex'
+        flexDirection='column'
+        justifyContent='flex-start'
+        alignItems='left'
+        variant='unstyled'
+        onClick={onOpen}
+      >
+        <Text color='white'>{props.data.id}</Text>
       </Button>
 
       <Modal isOpen={isOpen} onClose={onClose}>
@@ -69,7 +66,13 @@ export default function Eventdisplay(props) {
               <TimeIcon color='blackAlpha.700' />
               <Box display='flex' ml='50px'>
                 <Text>
-                  {props.data.start.substring(0,2) < 12 ? props.data.start+' am' : props.data.start+' pm'} to {props.data.end.substring(0,2) < 12 ? props.data.end+' am' : props.data.end+' pm'}
+                  {props.data.start.substring(0, 2) < 12
+                    ? props.data.start + ' am'
+                    : props.data.start + ' pm'}{' '}
+                  to{' '}
+                  {props.data.end.substring(0, 2) < 12
+                    ? props.data.end + ' am'
+                    : props.data.end + ' pm'}
                 </Text>
               </Box>
             </Box>
@@ -77,17 +80,13 @@ export default function Eventdisplay(props) {
             <Box display='flex' alignItems='center' fontSize='20px' my='10px'>
               <InfoOutlineIcon color='blackAlpha.700' />
               <Box display='flex' ml='50px'>
-                <Text>
-                  {props.data.type} 
-                </Text>
+                <Text>{props.data.type}</Text>
               </Box>
             </Box>
             <Box display='flex' alignItems='center' fontSize='20px' my='10px'>
               <SettingsIcon color='blackAlpha.700' />
               <Box display='flex' ml='50px'>
-                <Text>
-                  {props.data.resources} 
-                </Text>
+                <Text>{props.data.resources}</Text>
               </Box>
             </Box>
           </ModalBody>
@@ -96,7 +95,16 @@ export default function Eventdisplay(props) {
             <Button colorScheme='blue' mr={3} onClick={onClose}>
               Close
             </Button>
-            <Button _hover={{ bg: '#DB4437'}} onClick={e => {props.setDelete(true); props.setDel_id(props.data.id)}}>Delete Event</Button>
+            <Button
+              _hover={{ bg: '#DB4437' }}
+              onClick={e => {
+                props.setDelete(true);
+                props.setDel_id(props.data.id);
+                onClose();
+              }}
+            >
+              Delete Event
+            </Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

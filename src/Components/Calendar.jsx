@@ -10,10 +10,12 @@ import {
   GridItem,
   theme,
   Button,
+  useToast,
 } from '@chakra-ui/react';
-import { Eventreq } from './Eventreq';
+import { Fetchreq } from './Eventreq';
 import dayjs from 'dayjs';
 import Eventdisplay from './Evendisplay';
+import { useCallback } from 'react';
 
 export function Daily(props) {
   const times = [
@@ -25,58 +27,108 @@ export function Daily(props) {
   const [events, setEvents] = useState([]);
   const [isdelete, setIsdelete] = useState();
   const [del_id, setDel_id] = useState();
+  const [del_response, setDel_response] = useState();
   var blocks = [];
 
   useEffect(() => {
-    //Eventreq(props.dateQ, 'fetch');
-    setResp({
-      success: true,
-      error: null,
-      data: {
-        '2022-11-23': [
-          {
-            block_id: 40,
-            merchant_id: 'GR-JBXJEK',
-            resources: 1,
-            from_time: '12:00:00',
-            to_time: '14:00:00',
-            block_type: 'BOOKING',
-            date: '2022-11-23',
-          },
-          {
-            block_id: 41,
-            merchant_id: 'GR-JBXJEK',
-            resources: 2,
-            from_time: '14:30:00',
-            to_time: '16:00:00',
-            block_type: 'PERSONAL',
-            date: '2022-11-23',
-          },
-        ],
-        '2022-11-24': [
-          {
-            block_id: 42,
-            merchant_id: 'GR-JBXJEK',
-            resources: 1,
-            from_time: '10:00:00',
-            to_time: '14:00:00',
-            block_type: 'BOOKING',
-            date: '2022-11-24',
-          },
-          {
-            block_id: 43,
-            merchant_id: 'GR-JBXJEK',
-            resources: 2,
-            from_time: '12:30:00',
-            to_time: '16:00:00',
-            block_type: 'BOOKING',
-            date: '2022-11-24',
-          },
-        ],
-      },
+    // setResp({
+    //   success: true,
+    //   error: null,
+    //   data: {
+    //     '2022-11-23': [
+    //       {
+    //         block_id: 40,
+    //         merchant_id: 'GR-JBXJEK',
+    //         resources: 1,
+    //         from_time: '12:00:00',
+    //         to_time: '14:00:00',
+    //         block_type: 'BOOKING',
+    //         date: '2022-11-23',
+    //       },
+    //       {
+    //         block_id: 41,
+    //         merchant_id: 'GR-JBXJEK',
+    //         resources: 2,
+    //         from_time: '14:30:00',
+    //         to_time: '16:00:00',
+    //         block_type: 'PERSONAL',
+    //         date: '2022-11-23',
+    //       },
+    //     ],
+    //     '2022-11-24': [
+    //       {
+    //         block_id: 42,
+    //         merchant_id: 'GR-JBXJEK',
+    //         resources: 1,
+    //         from_time: '10:00:00',
+    //         to_time: '14:00:00',
+    //         block_type: 'BOOKING',
+    //         date: '2022-11-24',
+    //       },
+    //       {
+    //         block_id: 43,
+    //         merchant_id: 'GR-JBXJEK',
+    //         resources: 2,
+    //         from_time: '12:30:00',
+    //         to_time: '16:00:00',
+    //         block_type: 'BOOKING',
+    //         date: '2022-11-24',
+    //       },
+    //     ],
+    //     "2022-11-21": [
+    //       {
+    //           block_id: 43,
+    //           merchant_id: "GR-JBXJEK",
+    //           resources: 1,
+    //           from_time: "11:00:00",
+    //           to_time: "13:00:00",
+    //           block_type: "PERSONAL",
+    //           date: "2022-11-21"
+    //       }
+    //   ]
+    //   },
+    // });
+    //setResp(respdata);
+    var myHeaders = new Headers();
+    myHeaders.append(
+      'access-token',
+      'MzQ6dGVzdE1haWxAZ21haWwuY29tOkFkbWluOjM4ZDkzN2YxLTU1MGUtNDFmNy1iZTZiLTg1OGNkNzVjNGE4ZQ=='
+    );
+    myHeaders.append('Content-Type', 'application/json');
+    myHeaders.append('Access-Control-Allow-Origin', '*');
+
+    var raw = JSON.stringify({
+      merchant_id: 'GR-JBXJEK',
+      from_date: props.dateQ,
+      to_date: props.dateQ,
     });
-    console.log(props.s);
-    console.log(props.isDaily);
+
+    var requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: raw,
+      redirect: 'follow',
+    };
+
+    fetch(
+      'http://pawsensetest2-env.eba-rtpxdxih.ap-south-1.elasticbeanstalk.com/api/block/get_blocks_by_merchant',
+      requestOptions
+    )
+      .then(response => response.json())
+      .then(result => {
+        setResp(result);
+        console.log(result);
+      })
+      .catch(error => console.log('error', error));
+    // console.log(props.s);
+    // console.log(props.date);
+    // console.log(props.isDaily);
+    // console.log(props);
+    // console.log("call hvbsdcvbshbcjsbdc")
+
+    {
+      /* creating event block array and setting it to events */
+    }
     if (resp != null) {
       {
         resp.data[props.dateQ]?.map(b => {
@@ -99,15 +151,50 @@ export function Daily(props) {
         });
       }
     }
+    console.log(props.dateQ);
+    console.log(blocks);
     setEvents(blocks);
     setIsdelete(false);
-  }, [props.s,isdelete]);
+  }, [props.date, isdelete, props.s,]);
 
+  {
+    /* event delete request */
+  }
+  const toast = useToast();
   useEffect(() => {
     if (isdelete == true) {
-      alert(del_id);
-      //Eventreq(del_id,'del')
+      var myHeaders = new Headers();
+      myHeaders.append('Content-Type', 'application/json');
+      myHeaders.append(
+        'access-token',
+        'MzQ6dGVzdE1haWxAZ21haWwuY29tOkFkbWluOjM4ZDkzN2YxLTU1MGUtNDFmNy1iZTZiLTg1OGNkNzVjNGE4ZQ=='
+      );
+      myHeaders.append('Access-Control-Allow-Origin', '*');
+
+      var requestOptions = {
+        method: 'DELETE',
+        headers: myHeaders,
+        redirect: 'follow',
+      };
+
+      fetch(
+        `http://pawsensetest2-env.eba-rtpxdxih.ap-south-1.elasticbeanstalk.com/api/block/${del_id}`,
+        requestOptions
+      )
+        .then(response => response.json())
+        .then(result => {setDel_response(result)})
+        .catch(error => console.log('error', error));
     }
+
+    if(del_response != null && del_response.success == true) {
+      toast({
+        title: `Event ${del_id} Deleted`,
+        status: 'success',
+        durstion: 10000,
+        isClosable: true,
+      })
+    }
+    setIsdelete(false);
   }, [isdelete, del_id]);
 
   return (
@@ -158,7 +245,9 @@ export function Daily(props) {
           >
             {events.map(b => (
               <Box
-                w='70%'
+                w={{ base: '20%', md: '80%' }}
+                //minW={{base: '0', md: '30%'}}
+                mx='5px'
                 h={b.h}
                 display={
                   Math.floor(time) +

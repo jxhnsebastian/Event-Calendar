@@ -20,7 +20,6 @@ import { Daily } from './Calendar';
 import Sidebar from './Sidebar';
 import { HamburgerIcon } from '@chakra-ui/icons';
 import { getMonth, getWeek } from './DatePicker';
-import { Eventreq } from './Eventreq';
 import { monthNo } from './DatePicker';
 
 export default function Home() {
@@ -70,6 +69,7 @@ export default function Home() {
 
   return (
     <Box display='flex' flexDirection='column' w='100%' h='100vh'>
+      
       {/*header box */}
       <Box
         display='flex'

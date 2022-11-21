@@ -41,8 +41,8 @@ import {
   SettingsIcon,
   CalendarIcon,
 } from '@chakra-ui/icons';
-import { Eventreq } from './Eventreq';
 import dayjs from 'dayjs';
+import { Addreq, Fetchreq } from './Eventreq';
 
 export default function Eventmaker(props) {
   const [start, setStart] = useState('10:00:00');
@@ -51,6 +51,7 @@ export default function Eventmaker(props) {
   const [type, setType] = useState('');
   const [isB, setB] = useState(false);
   const [isP, setP] = useState(false);
+  const [resp, setResp] = useState();
   const eventinfo = {
     merchant_id: 'GR-JBXJEK',
     date: props.date,
@@ -68,30 +69,70 @@ export default function Eventmaker(props) {
 
   const toast = useToast();
 
-  const handleSubmit = e => {
-    //console.log(eventinfo);
-    //console.log(slidermax);
+  {/* event created / error toast message */}
+  useEffect(() => {
+    if (resp != null) {
+      resp.success == true
+        ? toast({
+            title: 'Event Created',
+            status: 'success',
+            durstion: 10000,
+            isClosable: true,
+          })
+        : toast({
+            title: 'Error',
+            description: resp.error.message,
+            status: 'error',
+            durstion: 10000,
+            isClosable: true,
+          });
+    }
+  }, [resp]);
+
+  const handleSubmit = () => {
     const valid = Validity(eventinfo);
-    //console.log(valid);
     if (valid.status == 'success') {
-      console.log(Eventreq(eventinfo, 'add'));
+      var myHeaders = new Headers();
+      myHeaders.append(
+        'access-token',
+        'MzQ6dGVzdE1haWxAZ21haWwuY29tOkFkbWluOjM4ZDkzN2YxLTU1MGUtNDFmNy1iZTZiLTg1OGNkNzVjNGE4ZQ=='
+      );
+      myHeaders.append('Content-Type', 'application/json');
+      myHeaders.append('Access-Control-Allow-Origin', '*');
+
+      var raw = JSON.stringify(eventinfo);
+
+      var requestOptions = {
+        method: 'POST',
+        headers: myHeaders,
+        body: raw,
+        redirect: 'follow',
+      };
+      fetch(
+        'http://pawsensetest2-env.eba-rtpxdxih.ap-south-1.elasticbeanstalk.com/api/block',
+        requestOptions
+      )
+        .then(response => response.json())
+        .then(result => {
+          //console.log(result);
+          setResp(result);
+        })
+        .catch(error => console.log('error', error));
       console.log(eventinfo);
+      setType('');
+      setB(false);
+      setP(false);
+      onClose();
     } else {
       toast({
         title: 'Error',
         description: valid.description,
         status: valid.status,
-        duration: 9000,
+        duration: 10000,
         isClosable: true,
       });
     }
-    //console.log(Eventreq(eventinfo, 'add'));
   };
-
-  // useEffect(() => {
-  //   console.log(type);
-  //   console.log(eventinfo);
-  // }, [type]);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const times = [
@@ -154,7 +195,12 @@ export default function Eventmaker(props) {
               />
             </ModalHeader>
           </Box>
-          <ModalCloseButton onClick={() => {setB(false);setP(false);}}/>
+          <ModalCloseButton
+            onClick={() => {
+              setB(false);
+              setP(false);
+            }}
+          />
           <Box bg={isB ? '#DB4437' : isP ? '#0F9D58' : ''}>
             <ModalBody>
               <Box
@@ -172,9 +218,7 @@ export default function Eventmaker(props) {
                     my='10px'
                   >
                     <CalendarIcon color='blackAlpha.700' mr='55px' />
-                    <Text fontFamily='sans-serif' >
-                      {props.date}
-                    </Text>
+                    <Text fontFamily='sans-serif'>{props.date}</Text>
                   </Box>
                   {/* Time Duration */}
                   <Box display='flex' alignItems='center' fontSize='20px'>
@@ -291,7 +335,12 @@ export default function Eventmaker(props) {
               </Box>
             </ModalBody>
             <ModalFooter>
-              <Button type='submit' onClick={handleSubmit}>
+              <Button
+                type='submit'
+                onClick={() => {
+                  handleSubmit();
+                }}
+              >
                 Submit
               </Button>
             </ModalFooter>
