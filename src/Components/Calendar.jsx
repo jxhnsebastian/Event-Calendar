@@ -155,7 +155,7 @@ export function Daily(props) {
     console.log(blocks);
     setEvents(blocks);
     setIsdelete(false);
-  }, [props.date, isdelete, props.s,]);
+  }, [props.date, isdelete, props.s, resp]);
 
   {
     /* event delete request */
