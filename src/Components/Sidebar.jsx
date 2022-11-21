@@ -27,17 +27,17 @@ export default function Sidebar(props) {
   {/* displays current week when today clicked */}
   function handleToday() {
     const month = getMonth();
-      {
-        month.map(w => {
-          {
-            w.map(d => {
-              if (d.$D == dayjs().$D) {
-                props.setweek(getWeek(w));
-              }
-            });
-          }
-        });
-      }
+    {
+      month.map(w => {
+        {
+          w.map(d => {
+            if (d.$D == dayjs().$D) {
+              props.setweek(getWeek(w));
+            }
+          });
+        }
+      });
+    }
   }
 
   const mNo = monthNo(props.month) + 1;

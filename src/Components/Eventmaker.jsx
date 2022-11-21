@@ -42,7 +42,6 @@ import {
   CalendarIcon,
 } from '@chakra-ui/icons';
 import dayjs from 'dayjs';
-import { Addreq, Fetchreq } from './Eventreq';
 
 export default function Eventmaker(props) {
   const [start, setStart] = useState('10:00:00');
@@ -118,7 +117,6 @@ export default function Eventmaker(props) {
           setResp(result);
         })
         .catch(error => console.log('error', error));
-      console.log(eventinfo);
       setType('');
       setB(false);
       setP(false);
@@ -351,9 +349,7 @@ export default function Eventmaker(props) {
   );
 }
 
-{
-  /* Event validity checker */
-}
+{/* Event validity checker */}
 function Validity(eventinfo) {
   var isSameOrBefore = require('dayjs/plugin/isSameOrBefore');
   dayjs.extend(isSameOrBefore);

@@ -31,36 +31,27 @@ export default function Home() {
   const [sidebar, setSidebar] = useState(true);
   const [week, setWeek] = useState([]);
 
-  // useEffect(() => {
-  //   console.log("home "+date_selected);
-  // }, [date_selected]);
-
-  // useEffect(() => {
-  //   Eventreq(week, 'fetch');
-  // }, [week]);
-
-  // useEffect(() => {
-  //   console.log(dayjs().isAfter(dayjs('2011-01-01')));
-  //   console.log(dayjs('2022-11-14 10:00:00').diff(dayjs('2022-11-14 10:00:60'), 'seconds'))
-  // }, []);
-
-  {/* dateQ to send to function Daily to send request */}
+  {
+    /* dateQ to send to function Daily to send request */
+  }
   const mNo = monthNo(curr_month) + 1;
   const d = date_selected;
-  const dateQ = curr_yr + '-' + (mNo<10 ? '0'+mNo : mNo )+ '-' + (d < 10 ? '0'+d : d)
+  const dateQ =
+    curr_yr + '-' + (mNo < 10 ? '0' + mNo : mNo) + '-' + (d < 10 ? '0' + d : d);
   useEffect(() => {
-       console.log('date : '+dateQ);
-     }, [date_selected]);
+    console.log('date : ' + dateQ);
+  }, [date_selected]);
 
-  {/* to display current week on loading */}
+  {
+    /* to display current week on loading */
+  }
   useEffect(() => {
     const month = getMonth();
     {
       month.map(week => {
         {
           week.map(d => {
-            if(d.$D == dayjs().$D)
-              setWeek(getWeek(week))
+            if (d.$D == dayjs().$D) setWeek(getWeek(week));
           });
         }
       });
@@ -69,7 +60,6 @@ export default function Home() {
 
   return (
     <Box display='flex' flexDirection='column' w='100%' h='100vh'>
-      
       {/*header box */}
       <Box
         display='flex'
@@ -157,7 +147,13 @@ export default function Home() {
         <Box w={{ base: '100%', lg: sidebar ? '80%' : '100%' }}>
           {isDaily && (
             <Box p='2'>
-              <Daily dateQ={dateQ} date={date_selected} day={day_selected} isDaily={true} s={date_selected} />
+              <Daily
+                dateQ={dateQ}
+                date={date_selected}
+                day={day_selected}
+                isDaily={true}
+                s={date_selected}
+              />
             </Box>
           )}
           {!isDaily && (

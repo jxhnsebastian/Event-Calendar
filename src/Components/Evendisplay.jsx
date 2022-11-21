@@ -22,8 +22,6 @@ import {
   ModalCloseButton,
 } from '@chakra-ui/react';
 import {
-  AddIcon,
-  ChevronDownIcon,
   TimeIcon,
   InfoOutlineIcon,
   SettingsIcon,

@@ -127,10 +127,6 @@ export default function DatePicker(props) {
                     setSlct_month(day.format('MMMM'));
                     props.setMonth(month);
                     props.setYr(year);
-                    //console.log(day);
-                    //console.log(day.$D);
-                    //console.log(day.$W);
-                    //console.log(day.$M);
                     props.setweek(getWeek(row));
                   }}
                 >
@@ -145,9 +141,7 @@ export default function DatePicker(props) {
   );
 }
 
-{
-  /* retunrs 7x5 matrix of days of the month */
-}
+{ /* retunrs 7x5 matrix of days of the month */ }
 export function getMonth(month = dayjs().month()) {
   month = Math.floor(month);
   const year = dayjs().year();
@@ -162,9 +156,7 @@ export function getMonth(month = dayjs().month()) {
   return daysMatrix;
 }
 
-{
-  /* returns week arrays in dateQ date day format */
-}
+{ /* returns week arrays in dateQ date day format */ }
 export function getWeek(week) {
   var weekdays = [];
   //console.log(week);
@@ -185,9 +177,7 @@ export function getWeek(week) {
   return weekdays;
 }
 
-{
-  /* returns month number 0-11 to text input */
-}
+{/* returns month number 0-11 to text input */}
 export function monthNo(m) {
   const months = [
     'January',

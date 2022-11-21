@@ -12,10 +12,8 @@ import {
   Button,
   useToast,
 } from '@chakra-ui/react';
-import { Fetchreq } from './Eventreq';
 import dayjs from 'dayjs';
 import Eventdisplay from './Evendisplay';
-import { useCallback } from 'react';
 
 export function Daily(props) {
   const times = [
@@ -31,64 +29,6 @@ export function Daily(props) {
   var blocks = [];
 
   useEffect(() => {
-    // setResp({
-    //   success: true,
-    //   error: null,
-    //   data: {
-    //     '2022-11-23': [
-    //       {
-    //         block_id: 40,
-    //         merchant_id: 'GR-JBXJEK',
-    //         resources: 1,
-    //         from_time: '12:00:00',
-    //         to_time: '14:00:00',
-    //         block_type: 'BOOKING',
-    //         date: '2022-11-23',
-    //       },
-    //       {
-    //         block_id: 41,
-    //         merchant_id: 'GR-JBXJEK',
-    //         resources: 2,
-    //         from_time: '14:30:00',
-    //         to_time: '16:00:00',
-    //         block_type: 'PERSONAL',
-    //         date: '2022-11-23',
-    //       },
-    //     ],
-    //     '2022-11-24': [
-    //       {
-    //         block_id: 42,
-    //         merchant_id: 'GR-JBXJEK',
-    //         resources: 1,
-    //         from_time: '10:00:00',
-    //         to_time: '14:00:00',
-    //         block_type: 'BOOKING',
-    //         date: '2022-11-24',
-    //       },
-    //       {
-    //         block_id: 43,
-    //         merchant_id: 'GR-JBXJEK',
-    //         resources: 2,
-    //         from_time: '12:30:00',
-    //         to_time: '16:00:00',
-    //         block_type: 'BOOKING',
-    //         date: '2022-11-24',
-    //       },
-    //     ],
-    //     "2022-11-21": [
-    //       {
-    //           block_id: 43,
-    //           merchant_id: "GR-JBXJEK",
-    //           resources: 1,
-    //           from_time: "11:00:00",
-    //           to_time: "13:00:00",
-    //           block_type: "PERSONAL",
-    //           date: "2022-11-21"
-    //       }
-    //   ]
-    //   },
-    // });
-    //setResp(respdata);
     var myHeaders = new Headers();
     myHeaders.append(
       'access-token',
@@ -117,18 +57,11 @@ export function Daily(props) {
       .then(response => response.json())
       .then(result => {
         setResp(result);
-        console.log(result);
+        //console.log(result);
       })
       .catch(error => console.log('error', error));
-    // console.log(props.s);
-    // console.log(props.date);
-    // console.log(props.isDaily);
-    // console.log(props);
-    // console.log("call hvbsdcvbshbcjsbdc")
 
-    {
-      /* creating event block array and setting it to events */
-    }
+    {/* creating event block array and setting it to events */}
     if (resp != null) {
       {
         resp.data[props.dateQ]?.map(b => {
@@ -157,9 +90,7 @@ export function Daily(props) {
     setIsdelete(false);
   }, [props.date, isdelete, props.s, resp]);
 
-  {
-    /* event delete request */
-  }
+  {/* event delete request */}
   const toast = useToast();
   useEffect(() => {
     if (isdelete == true) {
