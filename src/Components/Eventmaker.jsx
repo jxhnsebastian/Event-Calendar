@@ -197,6 +197,7 @@ export default function Eventmaker(props) {
             onClick={() => {
               setB(false);
               setP(false);
+              setType('');
             }}
           />
           <Box bg={isB ? '#DB4437' : isP ? '#0F9D58' : ''}>
