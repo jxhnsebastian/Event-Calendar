@@ -30,18 +30,15 @@ export function Daily(props) {
 
   useEffect(() => {
     var myHeaders = new Headers();
-    myHeaders.append(
-      'access-token',
-      'MzQ6dGVzdE1haWxAZ21haWwuY29tOkFkbWluOjM4ZDkzN2YxLTU1MGUtNDFmNy1iZTZiLTg1OGNkNzVjNGE4ZQ=='
-    );
     myHeaders.append('Content-Type', 'application/json');
-    myHeaders.append('Access-Control-Allow-Origin', '*');
 
     var raw = JSON.stringify({
       merchant_id: 'GR-JBXJEK',
-      from_date: props.dateQ,
-      to_date: props.dateQ,
+      from_date: props.dateQ.toString(),
+      to_date: props.dateQ.toString(),
     });
+    // console.log(raw);
+    // console.log(typeof props.dateQ);
 
     var requestOptions = {
       method: 'POST',
@@ -50,18 +47,21 @@ export function Daily(props) {
       redirect: 'follow',
     };
 
-    fetch(
-      'http://pawsensetest2-env.eba-rtpxdxih.ap-south-1.elasticbeanstalk.com/api/block/get_blocks_by_merchant',
-      requestOptions
-    )
+    fetch('http://localhost:5000/getWeek', requestOptions)
       .then(response => response.json())
       .then(result => {
         setResp(result);
-        //console.log(result);
+        console.log(result.data);
       })
       .catch(error => console.log('error', error));
+    console.log(props.dateQ);
+    console.log(blocks);
+  }, [props.date, isdelete, props.s]);
 
-    {/* creating event block array and setting it to events */}
+  {
+    /* creating event block array and setting it to events */
+  }
+  useEffect(() => {
     if (resp != null) {
       {
         resp.data[props.dateQ]?.map(b => {
@@ -83,47 +83,67 @@ export function Daily(props) {
           });
         });
       }
+      setEvents(blocks);
+      setIsdelete(false);
     }
-    console.log(props.dateQ);
-    console.log(blocks);
-    setEvents(blocks);
-    setIsdelete(false);
-  }, [props.date, isdelete, props.s, resp]);
+  }, [resp]);
 
-  {/* event delete request */}
+  {
+    /* event delete request */
+  }
   const toast = useToast();
   useEffect(() => {
     if (isdelete == true) {
+      // var myHeaders = new Headers();
+      // myHeaders.append('Content-Type', 'application/json');
+      // myHeaders.append(
+      //   'access-token',
+      //   'MzQ6dGVzdE1haWxAZ21haWwuY29tOkFkbWluOjM4ZDkzN2YxLTU1MGUtNDFmNy1iZTZiLTg1OGNkNzVjNGE4ZQ=='
+      // );
+      // myHeaders.append('Access-Control-Allow-Origin', '*');
+
+      // var requestOptions = {
+      //   method: 'DELETE',
+      //   headers: myHeaders,
+      //   redirect: 'follow',
+      // };
+
+      // fetch(
+      //   `http://pawsensetest2-env.eba-rtpxdxih.ap-south-1.elasticbeanstalk.com/api/block/${del_id}`,
+      //   requestOptions
+      // )
+      //   .then(response => response.json())
+      //   .then(result => {
+      //     setDel_response(result);
+      //     console.log(result);
+      //   })
+      //   .catch(error => console.log('error', error));
+
       var myHeaders = new Headers();
       myHeaders.append('Content-Type', 'application/json');
-      myHeaders.append(
-        'access-token',
-        'MzQ6dGVzdE1haWxAZ21haWwuY29tOkFkbWluOjM4ZDkzN2YxLTU1MGUtNDFmNy1iZTZiLTg1OGNkNzVjNGE4ZQ=='
-      );
-      myHeaders.append('Access-Control-Allow-Origin', '*');
+      myHeaders.append('block_id', `${del_id}`);
 
       var requestOptions = {
-        method: 'DELETE',
+        method: 'GET',
         headers: myHeaders,
         redirect: 'follow',
       };
 
-      fetch(
-        `http://pawsensetest2-env.eba-rtpxdxih.ap-south-1.elasticbeanstalk.com/api/block/${del_id}`,
-        requestOptions
-      )
-        .then(response => response.json())
-        .then(result => {setDel_response(result)})
+      fetch(`http://localhost:5000/delete`, requestOptions)
+        .then(response => {
+          setDel_response(response);
+          console.log(response);
+        })
         .catch(error => console.log('error', error));
     }
 
-    if(del_response != null && del_response.success == true) {
+    if (del_response != null && del_response == true) {
       toast({
         title: `Event ${del_id} Deleted`,
         status: 'success',
         durstion: 10000,
         isClosable: true,
-      })
+      });
     }
     setIsdelete(false);
   }, [isdelete, del_id]);
@@ -176,7 +196,7 @@ export function Daily(props) {
           >
             {events.map(b => (
               <Box
-                w={{ base: '20%', md: '80%' }}
+                w={{ base: '50%', md: '80%' }}
                 //minW={{base: '0', md: '30%'}}
                 mx='5px'
                 h={b.h}
@@ -192,6 +212,7 @@ export function Daily(props) {
                 <Button
                   w='100%'
                   h='100%'
+                  variant='unstyled'
                   bg={b.type == 'BOOKING' ? '#DB4437' : '#0F9D58'}
                   _hover={{ bg: b.type == 'BOOKING' ? '#D21404' : '#028A0F' }}
                   borderTopWidth='20px'

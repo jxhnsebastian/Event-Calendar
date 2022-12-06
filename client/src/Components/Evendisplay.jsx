@@ -43,7 +43,7 @@ export default function Eventdisplay(props) {
         variant='unstyled'
         onClick={onOpen}
       >
-        <Text color='white'>{props.data.id}</Text>
+        <Text color='white' px='10px'>{props.data.id}</Text>
       </Button>
 
       <Modal isOpen={isOpen} onClose={onClose}>
@@ -94,7 +94,7 @@ export default function Eventdisplay(props) {
               Close
             </Button>
             <Button
-              _hover={{ bg: '#DB4437' }}
+              _hover={{ bg: '#D21404', color: 'whiteAlpha.800' }}
               onClick={e => {
                 props.setDelete(true);
                 props.setDel_id(props.data.id);
