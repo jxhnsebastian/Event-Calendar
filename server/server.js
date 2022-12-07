@@ -1,94 +1,144 @@
 import express from "express";
-//import mongoose from "mongoose";
+import mongoose from "mongoose";
 import cors from "cors";
-import axios from "axios";
+import * as dotenv from "dotenv";
+import dayjs from "dayjs";
 
 const app = express();
-const port = 5000;
-
 app.use(express.json());
 app.use(cors());
 
-app.post("/getWeek", (req, res) => {
-  var data = req.body;
-  console.log(data);
+if (process.env.NODE_ENV !== "production") {
+  dotenv.config()
+}
 
-  var config = {
-    method: "post",
-    url: "http://pawsensetest2-env.eba-rtpxdxih.ap-south-1.elasticbeanstalk.com/api/block/get_blocks_by_merchant",
-    headers: {
-      "access-token":
-        "MzQ6dGVzdE1haWxAZ21haWwuY29tOkFkbWluOjM4ZDkzN2YxLTU1MGUtNDFmNy1iZTZiLTg1OGNkNzVjNGE4ZQ==",
-      "Content-Type": "application/json",
+const PORT = process.env.PORT || 27017;
+const CONNECTION_URI =
+  process.env.MONGODB_URI || "mongodb://localhost:27017/calendar";
+
+
+mongoose.set("strictQuery", true);
+const { Schema } = mongoose;
+
+const eventSchema = new Schema({
+  user: String,
+  labels: ["Work", "Personal", "Reminder"],
+  events: [
+    {
+      id: Number,
+      title: String,
+      label: String,
+      date: String,
+      from_time: String,
+      to_time: String,
+      notes: String,
     },
-    data: data,
-  };
-
-  axios(config)
-    .then(function (response) {
-      console.log(response);
-      res.send(response);
-    })
-    .catch(function (error) {
-      console.log(error);
-    });
+  ],
 });
 
-app.post("/addEvent", (req, res) => {
-  var data = JSON.stringify({
-    merchant_id: "GR-JBXJEK",
-    date: "2023-01-05",
-    from_time: "11:00:00",
-    to_time: "13:00:00",
-    resources: 1,
-    block_type: "PERSONAL",
+const Event = mongoose.model("event", eventSchema);
+
+const counterSchema = new Schema({
+  id: String,
+  seq: Number,
+});
+
+const Counter = mongoose.model("counter", counterSchema);
+
+mongoose
+  .connect(CONNECTION_URI)
+  .then(() => {
+    console.log("Connected to MongoDB");
+  })
+  .catch((err) => {
+    throw err;
   });
 
-  var config = {
-    method: "post",
-    url: "http://pawsensetest2-env.eba-rtpxdxih.ap-south-1.elasticbeanstalk.com/api/block",
-    headers: {
-      "access-token":
-        "MzQ6dGVzdE1haWxAZ21haWwuY29tOkFkbWluOjM4ZDkzN2YxLTU1MGUtNDFmNy1iZTZiLTg1OGNkNzVjNGE4ZQ==",
-      "Content-Type": "application/json",
-    },
-    data: data,
-  };
-
-  axios(config)
-    .then(function (response) {
-      console.log("fvdfvdfvcdf");
-      console.log(JSON.parse(response.data));
-      res.send(JSON.parse(response.data));
-    })
-    .catch(function (error) {
-      console.log(error);
-    });
+app.get("/calendar", (req, res) => {
+  Event.find().then((data) => {
+    res.send(data);
+  });
 });
 
-app.get("/delete", (req, res) => {
-  var block_id = req.headers.block_id ;
-  console.log(block_id);
-  var config = {
-    method: "delete",
-    url: `http://pawsensetest2-env.eba-rtpxdxih.ap-south-1.elasticbeanstalk.com/api/block/${block_id}`,
-    headers: {
-      "Content-Type": "application/json",
-      "access-token":
-        "MzQ6dGVzdE1haWxAZ21haWwuY29tOkFkbWluOjM4ZDkzN2YxLTU1MGUtNDFmNy1iZTZiLTg1OGNkNzVjNGE4ZQ==",
-    },
-  };
-
-  axios(config)
-    .then(function (response) {
-      console.log(response.data.success);
-      res.send(response.data.success);
-    })
-    .catch(function (error) {
-      console.log(error);
+app.post("/calendar/getDay", (req, res) => {
+  Event.findOne({ user: req.body.user }).then((data) => {
+    var events = data.events.filter(function (doc) {
+      return doc.date == req.body.date;
     });
+    //console.log(events);
+    res.send(events);
+  });
 });
 
-app.listen(port, () => {
-  console.log(`Server: http://localhost:${port}`);
+app.post("/calendar/addEvent", (req, res) => {
+  Counter.findOneAndUpdate(
+    { id: "auto" },
+    { $inc: { seq: 1 } },
+    { new: true },
+    (err, cd) => {
+      let seqId;
+      if (cd == null) {
+        const newId = new Counter({ id: "auto", seq: 1 });
+        newId.save();
+        seqId = 1;
+      } else {
+        seqId = cd.seq;
+      }
+      //console.log(req.body);
+      Event.updateOne(
+        { user: req.body.user },
+        {
+          $push: {
+            events: {
+              id: seqId,
+              title: req.body.title,
+              label: req.body.label,
+              date: req.body.date,
+              from_time: req.body.from_time,
+              to_time: req.body.to_time,
+              notes: req.body.notes,
+            },
+          },
+        },
+        function (err, docs) {
+          if (err) console.log(err);
+          else {
+            console.log("Event created");
+            Event.findOne({ user: req.body.user }).then((data) => {
+              var new_event = data.events.find(function (doc) {
+                return doc.id == seqId;
+              });
+              //console.log(new_event);
+              res.send(new_event);
+            });
+          }
+        }
+      );
+    }
+  );
+});
+
+app.post("/calendar/addUser", (req, res) => {
+  const newUser = new Event({
+    user: req.body.user,
+    labels: ["Work", "Personal", "Reminder"],
+    events: [],
+  });
+  newUser.save();
+  res.send("user created");
+});
+
+app.post("/calendar/delete", (req, res) => {
+  Event.updateOne(
+    { user: req.body.user },
+    { $pull: { events: { id: req.body.id } } },
+    function (err, docs) {
+      if (err) console.log(err);
+      else res.send("Event Deleted");
+    }
+  );
+});
+
+app.listen(PORT, () => {
+  console.log(`Server: http://localhost:${PORT}`);
 });
