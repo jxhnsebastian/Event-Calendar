@@ -1,5 +1,4 @@
 {
-  "homepage": "http://CapedBaldie.github.io/Event-Calendar",
   "name": "chakra-react-template",
   "version": "0.1.0",
   "private": true,
@@ -44,7 +43,6 @@
     ]
   },
   "devDependencies": {
-    "gh-pages": "^4.0.0",
     "husky": "^8.0.1",
     "lint-staged": "^13.0.3",
     "prettier": "2.7.1"
