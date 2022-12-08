@@ -17,8 +17,10 @@ import Eventdisplay from './Evendisplay';
 
 export function Daily(props) {
   const times = [
-    10.0, 10.5, 11.0, 11.5, 12.0, 12.5, 13.0, 13.5, 14.0, 14.5, 15.0, 15.5,
-    16.0, 16.5, 17.0,
+    0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 5.5, 6.0, 6.5, 7.0,
+    7.5, 8.0, 8.5, 9.0, 9.5, 10.0, 10.5, 11.0, 11.5, 12.0, 12.5, 13.0, 13.5,
+    14.0, 14.5, 15.0, 15.5, 16.0, 16.5, 17.0, 17.5, 18.0, 18.5, 19.0, 19.5,
+    20.0, 20.5, 21.0, 21.5, 22.0, 22.5, 23.0, 23.5,
   ];
 
   const [resp, setResp] = useState();
@@ -29,13 +31,13 @@ export function Daily(props) {
   var blocks = [];
 
   useEffect(() => {
+    
     var myHeaders = new Headers();
     myHeaders.append('Content-Type', 'application/json');
 
     var raw = JSON.stringify({
-      merchant_id: 'GR-JBXJEK',
-      from_date: props.dateQ.toString(),
-      to_date: props.dateQ.toString(),
+      user: 'Nikhil',
+      date: props.dateQ.toString(),
     });
     // console.log(raw);
     // console.log(typeof props.dateQ);
@@ -47,16 +49,14 @@ export function Daily(props) {
       redirect: 'follow',
     };
 
-    fetch('http://localhost:5000/getWeek', requestOptions)
+    fetch('https://event-calendar.onrender.com/calendar/getDay', requestOptions)
       .then(response => response.json())
       .then(result => {
         setResp(result);
-        console.log(result.data);
+        console.log(result);
       })
       .catch(error => console.log('error', error));
-    console.log(props.dateQ);
-    console.log(blocks);
-  }, [props.date, isdelete, props.s]);
+  }, [isdelete, props.s, props.newEvent]);
 
   {
     /* creating event block array and setting it to events */
@@ -64,9 +64,9 @@ export function Daily(props) {
   useEffect(() => {
     if (resp != null) {
       {
-        resp.data[props.dateQ]?.map(b => {
+        resp?.map(b => {
           blocks.push({
-            id: b.block_id,
+            id: b.id,
             start: b.from_time.substring(0, 5),
             end: b.to_time.substring(0, 5),
             h:
@@ -77,8 +77,8 @@ export function Daily(props) {
                 30) *
                 100 +
               '%',
-            resources: b.resources,
-            type: b.block_type,
+            notes: b.notes,
+            type: b.label,
             date: b.date,
           });
         });
@@ -94,59 +94,44 @@ export function Daily(props) {
   const toast = useToast();
   useEffect(() => {
     if (isdelete == true) {
-      // var myHeaders = new Headers();
-      // myHeaders.append('Content-Type', 'application/json');
-      // myHeaders.append(
-      //   'access-token',
-      //   'MzQ6dGVzdE1haWxAZ21haWwuY29tOkFkbWluOjM4ZDkzN2YxLTU1MGUtNDFmNy1iZTZiLTg1OGNkNzVjNGE4ZQ=='
-      // );
-      // myHeaders.append('Access-Control-Allow-Origin', '*');
-
-      // var requestOptions = {
-      //   method: 'DELETE',
-      //   headers: myHeaders,
-      //   redirect: 'follow',
-      // };
-
-      // fetch(
-      //   `http://pawsensetest2-env.eba-rtpxdxih.ap-south-1.elasticbeanstalk.com/api/block/${del_id}`,
-      //   requestOptions
-      // )
-      //   .then(response => response.json())
-      //   .then(result => {
-      //     setDel_response(result);
-      //     console.log(result);
-      //   })
-      //   .catch(error => console.log('error', error));
-
       var myHeaders = new Headers();
       myHeaders.append('Content-Type', 'application/json');
-      myHeaders.append('block_id', `${del_id}`);
+
+      var raw = JSON.stringify({
+        user: 'Nikhil',
+        id: del_id,
+      });
 
       var requestOptions = {
-        method: 'GET',
+        method: 'POST',
         headers: myHeaders,
+        body: raw,
         redirect: 'follow',
       };
 
-      fetch(`http://localhost:5000/delete`, requestOptions)
-        .then(response => {
-          setDel_response(response);
-          console.log(response);
+      fetch(`https://event-calendar.onrender.com/calendar/delete`, requestOptions)
+        .then(response => response.text())
+        .then(result => {
+          setDel_response(result);
+          console.log(result);
         })
         .catch(error => console.log('error', error));
     }
+    setIsdelete(false);
+  }, [isdelete, del_id]);
 
-    if (del_response != null && del_response == true) {
+  useEffect(() => {
+    if (del_response == 'success') {
       toast({
         title: `Event ${del_id} Deleted`,
         status: 'success',
-        durstion: 10000,
+        duration: 10000,
         isClosable: true,
       });
     }
-    setIsdelete(false);
-  }, [isdelete, del_id]);
+  }, [del_response])
+
+  
 
   return (
     <Box bg='white' w='100%'>
@@ -170,19 +155,22 @@ export function Daily(props) {
       </Box>
       {/* slot blocks */}
       {times.map(time => (
-        <Box display='flex' flexDirection='row' h='12'>
+        <Box display='flex' flexDirection='row' h='35px'>
           <Text
             display={
               props.isDaily ? 'block' : props.displayTime ? 'block' : 'none'
             }
-            fontSize={props.displayTime ? '10' : '13'}
+            fontSize={props.displayTime ? '10' : '10'}
             fontWeight='semi-bold'
             align='start'
-            minW={props.displayTime ? '20px' : '40px'}
-            mt='-2'
+            minW={{ base: '20px', md: '30px' }}
+            mt='-4px'
+            mr='1'
           >
-            {Math.floor(time)} :{' '}
-            {(time - Math.floor(time)) * 60 == 0 ? '00' : '30'}
+            {Math.floor(time) < 10.0
+              ? '0' + Math.floor(time)
+              : Math.floor(time)}{' '}
+            : {(time - Math.floor(time)) * 60 == 0 ? '00' : '30'}
           </Text>
           <Box
             w='100%'
@@ -190,6 +178,7 @@ export function Daily(props) {
             _hover={{ bg: 'blackAlpha.100' }}
             border='1px'
             borderBottom='0px'
+            borderRight='0px'
             borderColor='#D9DDDC'
             display='flex'
             justifyContent='center'
@@ -197,11 +186,12 @@ export function Daily(props) {
             {events.map(b => (
               <Box
                 w={{ base: '50%', md: '80%' }}
-                //minW={{base: '0', md: '30%'}}
                 mx='5px'
                 h={b.h}
                 display={
-                  Math.floor(time) +
+                  (Math.floor(time) < 10.0
+                    ? '0' + Math.floor(time)
+                    : Math.floor(time)) +
                     ':' +
                     ((time - Math.floor(time)) * 60 == 0 ? '00' : '30') ==
                   b.start
@@ -213,8 +203,21 @@ export function Daily(props) {
                   w='100%'
                   h='100%'
                   variant='unstyled'
-                  bg={b.type == 'BOOKING' ? '#DB4437' : '#0F9D58'}
-                  _hover={{ bg: b.type == 'BOOKING' ? '#D21404' : '#028A0F' }}
+                  bg={
+                    b.type == 'Work'
+                      ? '#DB4437'
+                      : b.type == 'Personal'
+                      ? '#0F9D58'
+                      : '#4285F4'
+                  }
+                  _hover={{
+                    bg:
+                      b.type == 'Work'
+                        ? '#D21404'
+                        : b.type == 'Personal'
+                        ? '#028A0F'
+                        : '#0013DE',
+                  }}
                   borderTopWidth='20px'
                   borderColor='blackAlpha.700'
                 >
@@ -236,7 +239,7 @@ export function Daily(props) {
 export function Weekly(props) {
   return (
     <Box ml='5px' mt='5px' mr='5px'>
-      <Grid templateColumns='repeat(5, 1fr)' gap={0}>
+      <Grid templateColumns='repeat(7, 1fr)' gap={0}>
         {props.week.map(wk => (
           <GridItem w='100%' bg='white'>
             <Box display='flex' flexFlow='column wrap'>
@@ -258,7 +261,7 @@ export function Weekly(props) {
                     bg:
                       props.date_selected == wk.date
                         ? '#2684FC'
-                        : 'blackAlpha.200',
+                        : 'blackAlpha.300',
                   }}
                   align='center'
                 >
@@ -278,9 +281,10 @@ export function Weekly(props) {
               dateQ={wk.dateQ}
               date={wk.date}
               day={wk.day}
-              displayTime={wk.day == 'Monday' ? true : false}
+              displayTime={wk.day == 'Sunday' ? true : false}
               isDaily={false}
               s={props.date_selected}
+              newEvent={props.newEvent}
             />
           </GridItem>
         ))}

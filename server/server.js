@@ -109,7 +109,10 @@ app.post("/calendar/addEvent", (req, res) => {
                 return doc.id == seqId;
               });
               //console.log(new_event);
-              res.send(new_event);
+              res.send({
+                success: true,
+                data: new_event
+              });
             });
           }
         }
@@ -134,7 +137,7 @@ app.post("/calendar/delete", (req, res) => {
     { $pull: { events: { id: req.body.id } } },
     function (err, docs) {
       if (err) console.log(err);
-      else res.send("Event Deleted");
+      else res.send("success");
     }
   );
 });

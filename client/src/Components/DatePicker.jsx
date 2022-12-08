@@ -162,15 +162,15 @@ export function getWeek(week) {
   //console.log(week);
   {
     week.map(day => {
-      if (day.$W == 0 || day.$W == 6) {
-      } else {
+      // if (day.$W == 0 || day.$W == 6) {
+      // } else {
         //console.log(day);
         weekdays.push({
           dateQ: day.format('YYYY-MM-DD'),
           date: day.$D,
           day: dayjs(dayjs().day(day.$W)).format('dddd'),
         });
-      }
+      // }
     });
   }
   //console.log(weekdays);

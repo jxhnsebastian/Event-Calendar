@@ -84,7 +84,7 @@ export default function Eventdisplay(props) {
             <Box display='flex' alignItems='center' fontSize='20px' my='10px'>
               <SettingsIcon color='blackAlpha.700' />
               <Box display='flex' ml='50px'>
-                <Text>{props.data.resources}</Text>
+                <Text>{props.data.notes}</Text>
               </Box>
             </Box>
           </ModalBody>

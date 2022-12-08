@@ -30,12 +30,13 @@ export default function Home() {
   const [curr_yr, setCurr_yr] = useState(dayjs().format('YYYY'));
   const [sidebar, setSidebar] = useState(true);
   const [week, setWeek] = useState([]);
+  const [newEvent, setNewEvent] = useState(false);
 
   {
     /* dateQ to send to function Daily to send request */
   }
-  const mNo = monthNo(curr_month) + 1;
-  const d = date_selected;
+  var mNo = monthNo(curr_month) + 1;
+  var d = date_selected;
   const dateQ =
     curr_yr + '-' + (mNo < 10 ? '0' + mNo : mNo) + '-' + (d < 10 ? '0' + d : d);
   useEffect(() => {
@@ -91,7 +92,7 @@ export default function Home() {
             Calendar
           </Text>
         </Box>
-        {/*month yr and butons*/}
+        {/*month yr and buttons*/}
         <Box
           mr={{ base: '0px', md: '10px' }}
           w={{ base: '110px', md: '400px' }}
@@ -127,7 +128,14 @@ export default function Home() {
           </Box>
         </Box>
       </Box>
-      <Box display='flex' flexGrow='1' w='100%' bg='white'>
+      <Box
+        display='flex'
+        h='calc(100% - 70px)'
+        overflow='hidden'
+        flexGrow='1'
+        w='100%'
+        bg='white'
+      >
         {/*sidebar*/}
         {sidebar && (
           <Sidebar
@@ -141,10 +149,26 @@ export default function Home() {
             setYr={setCurr_yr}
             yr={curr_yr}
             setweek={setWeek}
+            setNewEvent={setNewEvent}
           />
         )}
         {/*calendar*/}
-        <Box w={{ base: '100%', lg: sidebar ? '80%' : '100%' }}>
+        <Box
+          w={{ base: '100%', lg: sidebar ? '80%' : '100%' }}
+          h='100%'
+          overflow='auto'
+          sx={{
+            '&::-webkit-scrollbar': {
+              width: '3px',
+              height: '3px',
+              borderRadius: '8px',
+              backgroundColor: 'transparent',
+            },
+            '&::-webkit-scrollbar-thumb': {
+              backgroundColor: '#4285F4',
+            },
+          }}
+        >
           {isDaily && (
             <Box p='2'>
               <Daily
@@ -153,6 +177,7 @@ export default function Home() {
                 day={day_selected}
                 isDaily={true}
                 s={date_selected}
+                newEvent={newEvent}
               />
             </Box>
           )}
@@ -163,6 +188,7 @@ export default function Home() {
               setDate={setDate_selected}
               setDay={setDay_selected}
               week={week}
+              newEvent={newEvent}
             />
           )}
         </Box>

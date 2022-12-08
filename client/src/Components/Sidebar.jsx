@@ -57,7 +57,7 @@ export default function Sidebar(props) {
       bg='white'
       borderRight='2px'
       borderColor='#D9DDDC'
-      h='100%'
+      h={{ base: 'calc(100% - 70px)', lg: '100%' }}
       w={{ base: '60%', lg: '20%' }}
       position={{ base: 'absolute', lg: 'static' }}
       zIndex='1000'
@@ -68,7 +68,7 @@ export default function Sidebar(props) {
         _hover={{}}
         onClick={e => props.setSidebar(false)}
       />
-      <Eventmaker date={date} />
+      <Eventmaker date={date} setNewEvent={props.setNewEvent}/>
       <DatePicker
         date_selected={props.date_selected}
         setDaily={props.setDaily}

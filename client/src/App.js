@@ -10,16 +10,17 @@ import {
   theme,
 } from '@chakra-ui/react';
 import { ColorModeSwitcher } from './ColorModeSwitcher';
-import Footer from './Components/Footer';
 import Home from './Components/Home';
+import { GlobalProvider } from './context/GlobalContext';
 
 function App() {
   return (
     <ChakraProvider theme={theme}>
+      <GlobalProvider>
       <Box>
         <Home />
-        <Footer />
       </Box>
+      </GlobalProvider>
     </ChakraProvider>
   );
 }

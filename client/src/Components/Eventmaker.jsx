@@ -40,64 +40,69 @@ import {
   InfoOutlineIcon,
   SettingsIcon,
   CalendarIcon,
+  EditIcon,
 } from '@chakra-ui/icons';
 import dayjs from 'dayjs';
 
 export default function Eventmaker(props) {
   const [start, setStart] = useState('10:00:00');
   const [end, setEnd] = useState('17:00:00');
-  const [resources, setResources] = useState('1');
+  const [title, setTitle] = useState('');
   const [type, setType] = useState('');
-  const [isB, setB] = useState(false);
+  const [notes, setNotes] = useState('');
+  const [isW, setW] = useState(false);
   const [isP, setP] = useState(false);
+  const [isR, setR] = useState(false);
   const [resp, setResp] = useState();
   const eventinfo = {
-    merchant_id: 'GR-JBXJEK',
+    user: 'Nikhil',
+    title: title,
+    label: type,
     date: props.date,
     from_time: start,
     to_time: end,
-    resources: resources,
-    block_type: type,
+    notes: notes,
   };
 
-  const slidermax =
-    dayjs(props.date + ' ' + end).diff(
-      dayjs(props.date + ' ' + start),
-      'minutes'
-    ) / 10;
+  const updateTitle = e => {
+    setTitle(e.target.value);
+  };
+
+  const updateNotes = e => {
+    setNotes(e.target.value);
+  };
 
   const toast = useToast();
-
-  {/* event created / error toast message */}
+  {
+    /* event created / error toast message */
+  }
   useEffect(() => {
     if (resp != null) {
       resp.success == true
         ? toast({
             title: 'Event Created',
             status: 'success',
-            durstion: 10000,
+            duration: 10000,
             isClosable: true,
           })
         : toast({
             title: 'Error',
             description: resp.error.message,
             status: 'error',
-            durstion: 10000,
+            duration: 10000,
             isClosable: true,
           });
     }
   }, [resp]);
 
+  props.setNewEvent(false);
+
   const handleSubmit = () => {
+    
     const valid = Validity(eventinfo);
     if (valid.status == 'success') {
       var myHeaders = new Headers();
-      myHeaders.append(
-        'access-token',
-        'MzQ6dGVzdE1haWxAZ21haWwuY29tOkFkbWluOjM4ZDkzN2YxLTU1MGUtNDFmNy1iZTZiLTg1OGNkNzVjNGE4ZQ=='
-      );
       myHeaders.append('Content-Type', 'application/json');
-      myHeaders.append('Access-Control-Allow-Origin', '*');
 
       var raw = JSON.stringify(eventinfo);
 
@@ -108,19 +113,21 @@ export default function Eventmaker(props) {
         redirect: 'follow',
       };
       fetch(
-        'http://pawsensetest2-env.eba-rtpxdxih.ap-south-1.elasticbeanstalk.com/api/block',
+        'https://event-calendar.onrender.com/calendar/addEvent',
         requestOptions
       )
         .then(response => response.json())
         .then(result => {
-          //console.log(result);
+          console.log(result);
           setResp(result);
         })
         .catch(error => console.log('error', error));
       setType('');
-      setB(false);
+      setW(false);
+      setR(false);
       setP(false);
       onClose();
+      props.setNewEvent(true);
     } else {
       toast({
         title: 'Error',
@@ -134,6 +141,26 @@ export default function Eventmaker(props) {
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const times = [
+    '00:00:00',
+    '00:30:00',
+    '01:00:00',
+    '01:30:00',
+    '02:00:00',
+    '02:30:00',
+    '03:00:00',
+    '03:30:00',
+    '04:00:00',
+    '04:30:00',
+    '05:00:00',
+    '05:30:00',
+    '06:00:00',
+    '06:30:00',
+    '07:00:00',
+    '07:30:00',
+    '08:00:00',
+    '08:30:00',
+    '09:00:00',
+    '09:30:00',
     '10:00:00',
     '10:30:00',
     '11:00:00',
@@ -149,6 +176,19 @@ export default function Eventmaker(props) {
     '16:00:00',
     '16:30:00',
     '17:00:00',
+    '17:30:00',
+    '18:00:00',
+    '18:30:00',
+    '19:00:00',
+    '19:30:00',
+    '20:00:00',
+    '20:30:00',
+    '21:00:00',
+    '21:30:00',
+    '22:00:00',
+    '22:30:00',
+    '23:00:00',
+    '23:30:00',
   ];
 
   return (
@@ -188,19 +228,21 @@ export default function Eventmaker(props) {
                 fontWeight='semi-bold'
                 fontFamily='sans-serif'
                 variant='unstyled'
-                //onChange={handleChange}
+                maxLength= '30'
+                onChange={updateTitle}
                 isRequired
               />
             </ModalHeader>
           </Box>
           <ModalCloseButton
             onClick={() => {
-              setB(false);
+              setR(false);
+              setW(false);
               setP(false);
               setType('');
             }}
           />
-          <Box bg={isB ? '#DB4437' : isP ? '#0F9D58' : ''}>
+          <Box bg={isW ? '#DB4437' : isP ? '#0F9D58' : isR ? '#4285F4' : ''}>
             <ModalBody>
               <Box
                 display='flex'
@@ -275,16 +317,31 @@ export default function Eventmaker(props) {
                     >
                       <Checkbox
                         spacing='10px'
-                        isChecked={isB}
+                        isChecked={isR}
                         mr='15px'
-                        colorScheme='red'
+                        colorScheme='blue'
                         onChange={e => {
-                          setType('BOOKING');
-                          setB(true);
+                          setType('Reminder');
+                          setR(true);
+                          setW(false);
                           setP(false);
                         }}
                       >
-                        Booking
+                        Reminder
+                      </Checkbox>
+                      <Checkbox
+                        spacing='10px'
+                        isChecked={isW}
+                        mr='15px'
+                        colorScheme='red'
+                        onChange={e => {
+                          setType('Work');
+                          setW(true);
+                          setP(false);
+                          setR(false);
+                        }}
+                      >
+                        Work
                       </Checkbox>
                       <Checkbox
                         spacing='10px'
@@ -292,43 +349,32 @@ export default function Eventmaker(props) {
                         mr='15px'
                         colorScheme='green'
                         onChange={e => {
-                          setType('PERSONAL');
+                          setType('Personal');
                           setP(true);
-                          setB(false);
+                          setW(false);
+                          setR(false);
                         }}
                       >
                         Personal
                       </Checkbox>
                     </Box>
                   </Box>
-                  {/* Slider */}
-                  <Box display='flex' fontSize='20px' mt='25px' w='100%'>
-                    <SettingsIcon color='blackAlpha.700' mr='50px' />
-                    <Slider
-                      min={0}
-                      max={slidermax}
-                      step={1}
-                      onChange={val => setResources(val)}
-                      defaultValue={1}
-                    >
-                      <SliderMark
-                        value={resources}
-                        textAlign='center'
-                        bg='#4285F4'
-                        fontSize='15px'
-                        color='white'
-                        mt='-29px'
-                        ml='-12px'
-                        w='25px'
-                        borderRadius='20px'
-                      >
-                        {resources}
-                      </SliderMark>
-                      <SliderTrack>
-                        <SliderFilledTrack />
-                      </SliderTrack>
-                      <SliderThumb />
-                    </Slider>
+                  {/*notes*/}
+                  <Box
+                    display='flex'
+                    alignItems='center'
+                    fontSize='18px'
+                    mb='20px'
+                  >
+                    <EditIcon color='blackAlpha.700' mr='55px' />
+                    <Input
+                      placeholder='Add Notes'
+                      _placeholder={{ color: 'black' }}
+                      fontFamily='sans-serif'
+                      variant='unstyled'
+                      maxLength= '50'
+                      onChange={updateNotes}
+                    />
                   </Box>
                 </Box>
               </Box>
@@ -350,7 +396,9 @@ export default function Eventmaker(props) {
   );
 }
 
-{/* Event validity checker */}
+{
+  /* Event validity checker */
+}
 function Validity(eventinfo) {
   var isSameOrBefore = require('dayjs/plugin/isSameOrBefore');
   dayjs.extend(isSameOrBefore);
@@ -369,12 +417,11 @@ function Validity(eventinfo) {
   )
     description = 'End time must be greater than Start time';
   else if (
-    eventinfo.block_type != 'BOOKING' &&
-    eventinfo.block_type != 'PERSONAL'
+    eventinfo.label != 'Work' &&
+    eventinfo.label != 'Personal' &&
+    eventinfo.label != 'Reminder'
   )
     description = 'Please Choose Event Type';
-  else if (eventinfo.resources == 0)
-    description = 'Resources must be greater than 0';
   else status = 'success';
   return { status: status, description: description };
 }
